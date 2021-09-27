@@ -166,6 +166,32 @@ future_label2:
 """
     )
 
+def test_assign_future_function_label():
+    code = """\
+[ap] = f; ap++
+func f() -> ():
+    ret
+end
+"""
+    program = preprocess_str(code=code, prime=PRIME)
+    assert program.format() == """\
+[ap] = 2; ap++
+ret
+"""
+
+def test_call_future_function():
+    code = """\
+call f
+func f() -> ():
+    ret
+end
+"""
+    program = preprocess_str(code=code, prime=PRIME)
+    assert program.format() == """\
+call rel 2
+ret
+"""
+
 
 def test_temporary_variable():
     code = """\

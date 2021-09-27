@@ -12,6 +12,7 @@ from starkware.cairo.lang.compiler.ast.expr import (
     ExprDeref,
     Expression,
     ExprHint,
+    ExprFutureLabel,
     ExprIdentifier,
     ExprNeg,
     ExprOperator,
@@ -160,6 +161,11 @@ class CompoundExpressionVisitor:
             addr=self.rewrite(expr.addr, SimplicityLevel.DEREF_OFFSET), location=expr.location
         )
         return expr if sim is SimplicityLevel.OPERATION else self.wrap(expr)
+
+    def rewrite_ExprFutureLabel(self, expr: ExprFutureLabel, sim: SimplicityLevel):
+        if sim in [SimplicityLevel.DEREF_CONST, SimplicityLevel.OPERATION]:
+            return expr
+        return self.wrap(expr)
 
     def rewrite_ExprHint(self, expr: ExprHint, sim: SimplicityLevel):
         return self.wrap(expr)
